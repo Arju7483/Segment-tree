@@ -1,0 +1,74 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long int
+const int N = 1e5;
+ll tree[4*N+9], lazy[4*N+9] , ar[N+9];
+void build(int node,int b,int e){
+    if(b==e){
+        tree[node] = ar[b];
+        lazy[node] = 0;
+        return;
+    }
+    int left = 2*node, right = 2*node+1;
+    int mid = (b+e)/2;
+    build(left,b,mid);
+    build(right,mid+1,e);
+    tree[node] = tree[left] + tree[right];
+
+}
+
+void push(int node,int b,int e){
+    tree[node] += (e-b+1)*lazy[node];
+    if(b != e){
+        lazy[2*node] += lazy[node];
+        lazy[2*node+1] += lazy[node];
+    }
+    lazy[node] = 0;
+}
+void Update(int node,int b,int e,int l,int r,int value){
+    if(lazy[node]!=0) push(node,b,e);
+    if(b>r||e<l)return;
+    if(b>=l && e <= r){
+        tree[node]+=(e-b+1)*value;
+        if(b!=e){
+            lazy[2*node] += value;
+            lazy[2*node+1] += value;
+        }
+        return;
+    }
+    int left = 2*node, right = 2*node+1;
+    int mid = (b+e)/2;
+    Update(left,b,mid,l,r,value);
+    Update(right,mid+1,e,l,r,value);
+    tree[node] = tree[left] + tree[right]; ///change this
+}
+
+int query(int node, int b, int e,int l,int r){
+    if(lazy[node] != 0)push(node,b,e);
+    if(b>r||e<l)return 0;
+    if(b>=l&&e<=r)return tree[node];
+    int mid = (b+e)/2;
+    return query(node*2,b,mid,l,r)+query(node*2+1,mid+1,e,l,r); ///change this
+}
+
+int main(){
+
+   int n,q;
+   cin >> n >> q;
+   for(int i=1;i<=n;i++)cin>>ar[i];
+   build(1,1,n);
+
+   while(q--){
+    int x;cin >> x;
+    if(x==1){
+        int l , r;
+        cin >> l >> r;
+        cout<<query(1,1,n,l,r)<<endl;
+    }
+    if(x==2){
+        int l,r , value;
+        cin >> l >> r >> value;
+        Update(1,1,n,l,r,value);
+    }
+   }
+}

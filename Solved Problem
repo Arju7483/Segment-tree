@@ -1,0 +1,91 @@
+Problem Link: https://codeforces.com/contest/482/problem/B
+Solution:
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+const int N = 1e5+9;
+const int B = 32;
+int ans[N],ar[N][B];
+bool ok = true;
+int tree[4*N];
+
+void build(int node,int b,int e){
+    if(b==e){
+           tree[node]=ans[b];
+        return;
+    }
+    int left = 2*node,right = 2*node+1,mid = (b+e)>>1;
+    build(left,b,mid);
+    build(right,mid+1,e);
+    tree[node]=(tree[left] & tree[right]);
+}
+
+
+int query(int node,int b,int e,int l,int r){
+    if(b>r||e<l){
+        return (1<<B)-1;
+    }
+    if(b>=l&&e<=r){
+        return tree[node];
+    }
+    int mid = (b+e)>>1;
+    return (query(2*node,b,mid,l,r) & query(2*node+1,mid+1,e,l,r));
+}
+void solve(){
+
+  int n,q;cin>>n>>q;
+  int left[N],right[N],v[N];
+  for(int i=1;i<=q;i++){
+    int l,r,value;
+    cin>>l>>r>>value;
+    left[i]=l;
+    right[i]=r;
+    v[i]=value;
+    for(int j=0;j<B;j++){
+        if((value>>j)&1){
+            ar[l][j]++;
+            ar[r+1][j]--;
+        }
+    }
+
+  }
+  for(int i=1;i<=n;i++){
+        int a=0;
+    for(int j=0;j<B;j++){
+        ar[i][j]=ar[i-1][j]+ar[i][j];
+      if(ar[i][j]>0)  a = a + (1<<j);
+
+    }
+    ans[i]=a;
+  }
+
+  build(1,1,n);
+  ok = true;
+   for(int i=1;i<=q;i++){
+    int l,r,value;
+    l=left[i],r=right[i],value=v[i];
+    int ANS = query(1,1,n,l,r);
+
+    if(ANS!=value){
+        ok=false;break;
+    }
+  }
+  if(ok)
+  {
+      cout<<"YES"<<endl;
+      for(int i=1;i<=n;i++){
+        cout<<ans[i]<<" ";
+
+      }
+      cout<<endl;
+  }
+  else cout<<"NO"<<endl;
+}
+
+int main(){
+    int t=1;
+   // cin>>t;
+    while(t--){
+        solve();
+    }
+}

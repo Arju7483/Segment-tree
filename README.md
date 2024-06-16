@@ -5,4 +5,6 @@
 
   [Problem-02 : ](https://atcoder.jp/contests/abc157/tasks/abc157_e) &nbsp; [My Solution](https://atcoder.jp/contests/abc157/submissions/48871826)
 
+  [Problem-03(Leetcode):](https://leetcode.com/problems/peaks-in-array/description/) &nbsp; [My Solution](https://leetcode.com/problems/peaks-in-array/solutions/5320605/segment-tree-c-solution/)
+
   </details>
